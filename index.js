@@ -16,16 +16,9 @@ let switching = false;
 let allocatedPort = null;
 let consolePassword = null;
 
-function resolveAllocatedPort() {
-  return process.env.SERVER_PORT || process.env.PORT || '3000';
-}
-
 function setupEnv() {
-  allocatedPort = resolveAllocatedPort();
+  allocatedPort = process.env.SERVER_PORT;
   consolePassword = process.env.CONSOLE_PASSWORD;
-  if (!consolePassword) {
-    consolePassword = crypto.randomBytes(9).toString('base64url');
-  }
 }
 
 function ensureClaudeCode() {
@@ -282,15 +275,6 @@ function ensureBaseline() {
 
   const baseDir = path.join(VERSIONS_DIR, 'v0.0.1');
   fs.mkdirSync(baseDir, { recursive: true });
-  fs.writeFileSync(
-    path.join(baseDir, 'index.js'),
-    `console.log('v0.0.1 baseline running (no network port assigned)');\n` +
-      `setInterval(() => {}, 1 << 30);\n`
-  );
-  fs.writeFileSync(
-    path.join(baseDir, 'update.txt'),
-    'v0.0.1 — initial baseline version created by orchestrator.\n'
-  );
 }
 
 async function main() {
